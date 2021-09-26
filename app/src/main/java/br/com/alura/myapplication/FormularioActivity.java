@@ -1,6 +1,8 @@
 package br.com.alura.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,15 +23,12 @@ public class FormularioActivity extends AppCompatActivity {
 
         helper = new FormularioHelper(this);
 
-//        Button botaoSalvar = findViewById(R.id.menu_formulario);
+        Intent intent = getIntent();
+        Aluno aluno = (Aluno) intent.getSerializableExtra("aluno");
+        if(aluno != null){
+            helper.preencheFormulario(aluno);
+        }
 
-//        botaoSalvar.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v){
-//                Toast.makeText(FormularioActivity.this, "Enviado", Toast.LENGTH_SHORT).show();
-//                finish();
-//            }
-//        });
     }
 
     @Override
@@ -46,9 +45,15 @@ public class FormularioActivity extends AppCompatActivity {
             case R.id.menu_formulario:
                 Aluno aluno = helper.PegaAluno();
                 AlunoDao dao = new AlunoDao(this);
-                dao.insere(aluno);
+
+                if(String.valueOf(aluno.getId()) != null){
+                    dao.alteraAluno(aluno);
+                } else {
+                    dao.insere(aluno);
+                }
                 dao.close();
-                Toast.makeText(FormularioActivity.this, "Aluno " + aluno.getNome() + " salvo!", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(FormularioActivity.this, "Aluno salvo!", Toast.LENGTH_SHORT).show();
                 finish();
                 break;
         }

@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,12 +16,12 @@ import br.com.alura.myapplication.modelo.Aluno;
 public class AlunoDao extends SQLiteOpenHelper {
 
     public AlunoDao(Context context) {
-        super(context, "Agenda", null, 1);
+        super(context, "Agenda", null, 3);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "CREATE TABLE Alunos (id INTEGER PRIMARY KEY, idade INTEGER, nome TEXT, endereco TEXT, telefone TEXT, nota REAL);";
+        String sql = "CREATE TABLE Alunos (id INTEGER PRIMARY KEY, nome TEXT, idade INTEGER, endereco TEXT, telefone TEXT, nota REAL);";
         db.execSQL(sql);
     }
 
@@ -32,14 +35,27 @@ public class AlunoDao extends SQLiteOpenHelper {
     public void insere(Aluno aluno) {
         SQLiteDatabase db = getWritableDatabase();
 
+        ContentValues dados = getContentValues(aluno);
+
+        db.insert("Alunos", null, dados);
+    }
+
+    @NonNull
+    private ContentValues getContentValues(Aluno aluno) {
         ContentValues dados = new ContentValues();
         dados.put("nome", aluno.getNome());
         dados.put("idade", aluno.getIdade());
         dados.put("endereco", aluno.getEndereco());
         dados.put("telefone", aluno.getTelefone());
         dados.put("nota", aluno.getNota());
+        return dados;
+    }
 
-        db.insert("Alunos", null, dados);
+    public void deleta(Aluno aluno) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String [] params = {String.valueOf(aluno.getId())};
+        db.delete("Alunos", "id = ?", params);
     }
 
     public List<Aluno> buscaAlunos() {
@@ -47,7 +63,7 @@ public class AlunoDao extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.rawQuery(sql, null);
 
-        List<Aluno> alunos = new ArrayList<Aluno>();
+        List<Aluno> alunos = new ArrayList<>();
         while(c.moveToNext()){
             Aluno aluno = new Aluno();
             aluno.setId(c.getInt(c.getColumnIndex("id")));
@@ -62,5 +78,14 @@ public class AlunoDao extends SQLiteOpenHelper {
         c.close();
 
         return alunos;
+    }
+
+    public void alteraAluno(Aluno aluno) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues dados = getContentValues(aluno);
+
+        String [] params = {String.valueOf(aluno.getId())};
+        db.update("Alunos", dados, "id = ?", params);
     }
 }
