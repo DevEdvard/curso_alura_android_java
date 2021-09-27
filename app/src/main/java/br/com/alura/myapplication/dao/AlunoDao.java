@@ -16,7 +16,7 @@ import br.com.alura.myapplication.modelo.Aluno;
 public class AlunoDao extends SQLiteOpenHelper {
 
     public AlunoDao(Context context) {
-        super(context, "Agenda", null, 3);
+        super(context, "Agenda", null, 4);
     }
 
     @Override
@@ -35,13 +35,13 @@ public class AlunoDao extends SQLiteOpenHelper {
     public void insere(Aluno aluno) {
         SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues dados = getContentValues(aluno);
+        ContentValues dados = getContentValuesAlunos(aluno);
 
         db.insert("Alunos", null, dados);
     }
 
     @NonNull
-    private ContentValues getContentValues(Aluno aluno) {
+    private ContentValues getContentValuesAlunos(Aluno aluno) {
         ContentValues dados = new ContentValues();
         dados.put("nome", aluno.getNome());
         dados.put("idade", aluno.getIdade());
@@ -83,8 +83,7 @@ public class AlunoDao extends SQLiteOpenHelper {
     public void alteraAluno(Aluno aluno) {
         SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues dados = getContentValues(aluno);
-
+        ContentValues dados = getContentValuesAlunos(aluno);
         String [] params = {String.valueOf(aluno.getId())};
         db.update("Alunos", dados, "id = ?", params);
     }

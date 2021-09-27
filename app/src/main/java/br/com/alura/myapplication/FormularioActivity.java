@@ -46,7 +46,7 @@ public class FormularioActivity extends AppCompatActivity {
                 Aluno aluno = helper.PegaAluno();
                 AlunoDao dao = new AlunoDao(this);
 
-                if(String.valueOf(aluno.getId()) != null){
+                if(aluno.getId() != 0){
                     dao.alteraAluno(aluno);
                 } else {
                     dao.insere(aluno);
